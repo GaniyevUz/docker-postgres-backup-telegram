@@ -41,14 +41,13 @@ for DB in ${POSTGRES_DBS}; do
     # Check if directory format (-Fd) is used
     if [[ "${POSTGRES_EXTRA_OPTS}" == *"-Fd"* ]]; then
       echo "📂 Directory format (-Fd) detected. Removing compression option (-Z0)..."
-      # shellcheck disable=SC2001
-      PG_DUMP_OPTS=$(echo "${POSTGRES_EXTRA_OPTS}" | sed 's/-Z0//g')
+      PG_DUMP_OPTS=$(echo "${POSTGRES_EXTRA_OPTS}" | sed 's/-Z0//g' | xargs)
       pg_dump -d "${DB}" -f "${FILE}" "${PG_DUMP_OPTS}"
     else
-      # shellcheck disable=SC2086
-      pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
+      pg_dump -d "${DB}" -f "${FILE}" "${POSTGRES_EXTRA_OPTS}"
     fi
   fi
+
 
   # Check if the backup file exists and is not empty before proceeding
   if [ -s "${FILE}" ]; then
