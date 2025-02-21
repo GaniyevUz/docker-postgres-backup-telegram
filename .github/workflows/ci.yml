@@ -67,8 +67,8 @@ jobs:
           BACKUP_KEEP_MINS: 1440
           WEBHOOK_URL: "**None**"
           WEBHOOK_EXTRA_ARGS: ""
-          TELEGRAM_BOT_TOKEN_FILE: "**None**"
-          TELEGRAM_CHAT_FILE: "**None**"
+          TELEGRAM_BOT_TOKEN_FILE: ""
+          TELEGRAM_CHAT_FILE: ""
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
@@ -102,8 +102,8 @@ jobs:
           BACKUP_KEEP_MINS: 1440
           WEBHOOK_URL: "**None**"
           WEBHOOK_EXTRA_ARGS: ""
-          TELEGRAM_BOT_TOKEN_FILE: "**None**"
-          TELEGRAM_CHAT_FILE: "**None**"
+          TELEGRAM_BOT_TOKEN_FILE: ""
+          TELEGRAM_CHAT_FILE: ""
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
@@ -137,8 +137,8 @@ jobs:
           BACKUP_KEEP_MINS: 1440
           WEBHOOK_URL: "**None**"
           WEBHOOK_EXTRA_ARGS: ""
-          TELEGRAM_BOT_TOKEN_FILE: "**None**"
-          TELEGRAM_CHAT_FILE: "**None**"
+          TELEGRAM_BOT_TOKEN_FILE: ""
+          TELEGRAM_CHAT_FILE: ""
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
