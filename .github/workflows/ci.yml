@@ -54,10 +54,10 @@ jobs:
           POSTGRES_EXTRA_OPTS: "-Z0"
           BACKUP_DIR: "/tmp/backups"
           # Defaults
-          POSTGRES_DB_FILE: "**None**"
-          POSTGRES_USER_FILE: "**None**"
-          POSTGRES_PASSWORD_FILE: "**None**"
-          POSTGRES_PASSFILE_STORE: "**None**"
+          POSTGRES_DB_FILE: ""
+          POSTGRES_USER_FILE: ""
+          POSTGRES_PASSWORD_FILE: ""
+          POSTGRES_PASSFILE_STORE: ""
           POSTGRES_CLUSTER: "FALSE"
           BACKUP_SUFFIX: ".sql.gz"
           BACKUP_LATEST_TYPE: "symlink"
@@ -65,12 +65,13 @@ jobs:
           BACKUP_KEEP_WEEKS: 4
           BACKUP_KEEP_MONTHS: 6
           BACKUP_KEEP_MINS: 1440
-          WEBHOOK_URL: "**None**"
+          WEBHOOK_URL: ""
           WEBHOOK_EXTRA_ARGS: ""
           TELEGRAM_BOT_TOKEN_FILE: ""
-          TELEGRAM_CHAT_FILE: ""
+          TELEGRAM_CHAT_ID_FILE: ""
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
         run: |
           echo "Test backup script for pg_dump..."
           rm -fR "$BACKUP_DIR"
