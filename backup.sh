@@ -34,10 +34,20 @@ for DB in ${POSTGRES_DBS}; do
   # Create dump
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dumpall -l "${DB}" "${POSTGRES_EXTRA_OPTS}" | gzip > "${FILE}"
+    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
   else
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dump -d "${DB}" -f "${FILE}" "${POSTGRES_EXTRA_OPTS}"
+
+    # Check if directory format (-Fd) is used
+    if [[ "${POSTGRES_EXTRA_OPTS}" == *"-Fd"* ]]; then
+      echo "📂 Directory format (-Fd) detected. Removing compression option (-Z0)..."
+      # shellcheck disable=SC2001
+      PG_DUMP_OPTS=$(echo "${POSTGRES_EXTRA_OPTS}" | sed 's/-Z0//g')
+      pg_dump -d "${DB}" -f "${FILE}" "${PG_DUMP_OPTS}"
+    else
+      # shellcheck disable=SC2086
+      pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
+    fi
   fi
 
   # Check if the backup file exists and is not empty before proceeding
