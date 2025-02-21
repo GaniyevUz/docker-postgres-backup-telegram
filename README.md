@@ -64,8 +64,8 @@ services:
       - HEALTHCHECK_PORT=8080
       - TELEGRAM_BOT_TOKEN=123456:xxxxx
       - TELEGRAM_CHAT_ID=123456
-#            - TELEGRAM_BOT_TOKEN_FILE=/run/secrets/bot_token  <-- alternative for TELEGRAM_BOT_TOKEN (to use with docker secrets)
-#            - TELEGRAM_CHAT_FILE=/run/secrets/chat_id  <-- alternative for TELEGRAM_CHAT_ID (to use with docker secrets)
+      #  - TELEGRAM_BOT_TOKEN_FILE=/run/secrets/bot_token  <-- alternative for TELEGRAM_BOT_TOKEN (to use with docker secrets)
+      #  - TELEGRAM_CHAT_FILE=/run/secrets/chat_id  <-- alternative for TELEGRAM_CHAT_ID (to use with docker secrets)
 ```
 
 For security reasons it is recommended to run it as user `postgres:postgres`.
