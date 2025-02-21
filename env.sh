@@ -61,24 +61,31 @@ else
 fi
 
 # Telegram Bot related env
-if [ "${TELEGRAM_BOT_TOKEN_FILE}" = "**None**" ]; then
-  export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN}"
-elif [ -r "${TELEGRAM_BOT_TOKEN_FILE}" ]; then
+if [ -n "${TELEGRAM_BOT_TOKEN_FILE}" ] && [ -r "${TELEGRAM_BOT_TOKEN_FILE}" ]; then
+  # Read token from file
   # shellcheck disable=SC2155
   export TELEGRAM_BOT_TOKEN=$(cat "${TELEGRAM_BOT_TOKEN_FILE}")
+elif [ -n "${TELEGRAM_BOT_TOKEN}" ]; then
+  # Use provided env variable
+  export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN}"
 else
-  echo "Error: Missing TELEGRAM_BOT_TOKEN_FILE file or it is not readable."
+  echo "❌ Error: TELEGRAM_BOT_TOKEN is not set via file or environment variable."
   exit 1
 fi
-if [ "${TELEGRAM_CHAT_ID_FILE}" = "**None**" ]; then
-  export TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
-elif [ -r "${TELEGRAM_CHAT_ID_FILE}" ]; then
+
+if [ -n "${TELEGRAM_CHAT_ID_FILE}" ] && [ -r "${TELEGRAM_CHAT_ID_FILE}" ]; then
+  # Read chat ID from file
   # shellcheck disable=SC2155
   export TELEGRAM_CHAT_ID=$(cat "${TELEGRAM_CHAT_ID_FILE}")
+elif [ -n "${TELEGRAM_CHAT_ID}" ]; then
+  # Use provided env variable
+  export TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
 else
-  echo "Error: Missing TELEGRAM_BOT_TOKEN_FILE file or it is not readable."
+  echo "❌ Error: TELEGRAM_CHAT_ID is not set via file or environment variable."
   exit 1
 fi
+
+
 echo "🔄 Checking Telegram bot credentials..."
 # Send a test message to Telegram
 echo "📨 Sending test message to Telegram..."
