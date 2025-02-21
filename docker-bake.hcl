@@ -7,7 +7,7 @@ variable "REGISTRY_PREFIX" {
 }
 
 variable "IMAGE_NAME" {
-	default = "postgres-backup-local"
+	default = "postgres-backup-telegram"
 }
 
 variable "BUILD_REVISION" {

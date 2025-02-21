@@ -1,4 +1,4 @@
-# postgres-backup-local build instructions
+# postgres-backup-telegram build instructions
 
 To build and push all images to it's own repository.
 
@@ -29,7 +29,7 @@ docker buildx bake --pull
 In order to build modifying the image name and the registry prefix run the following command:
 
 ```sh
-REGISTRY_PREFIX="dockerhub_username/" IMAGE_NAME="postgres-backup-local" docker buildx bake --pull
+REGISTRY_PREFIX="dockerhub_username/" IMAGE_NAME="postgres-backup-telegram" docker buildx bake --pull
 ```
 
 In order to publish directly to the registry run this command instead:

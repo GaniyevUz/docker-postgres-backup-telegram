@@ -36,6 +36,10 @@ ENV POSTGRES_DB="**None**" \
     WEBHOOK_PRE_BACKUP_URL="**None**" \
     WEBHOOK_POST_BACKUP_URL="**None**" \
     WEBHOOK_EXTRA_ARGS=""
+    TELEGRAM_BOT_FILE="**None**"
+    TELEGRAM_CHAT_FILE="**None**"
+    TELEGRAM_BOT_TOKEN=""
+    TELEGRAM_CHAT_ID=""
 
 COPY hooks /hooks
 COPY backup.sh env.sh init.sh /
