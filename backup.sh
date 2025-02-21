@@ -40,45 +40,61 @@ for DB in ${POSTGRES_DBS}; do
     pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
   fi
 
-  # Copy (hardlink) for each entry
-  if [ -f "${FILE}" ]; then
+  # Check if the backup file exists and is not empty before proceeding
+  if [ -s "${FILE}" ]; then
+    echo "✅ Backup file created successfully: ${FILE}"
+
+    # Copy (hardlink) for each entry
     echo "Replacing daily backup ${DFILE} with the latest backup..."
     ln -vf "${FILE}" "${DFILE}"
     echo "Replacing weekly backup ${WFILE} with the latest backup..."
     ln -vf "${FILE}" "${WFILE}"
     echo "Replacing monthly backup ${MFILE} with the latest backup..."
     ln -vf "${FILE}" "${MFILE}"
-  fi
 
-  # Update latest symlinks
-  LATEST_LN_ARG=""
-  if [ "${BACKUP_LATEST_TYPE}" = "symlink" ]; then
-    LATEST_LN_ARG="-s"
-  fi
-  if [ "${BACKUP_LATEST_TYPE}" = "symlink" ] || [ "${BACKUP_LATEST_TYPE}" = "hardlink" ]; then
-    echo "Pointing last backup file to the latest backup..."
-    ln "${LATEST_LN_ARG}" -vf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
-    echo "Pointing latest daily backup to the latest backup..."
-    ln "${LATEST_LN_ARG}" -vf "${DAILY_FILENAME}" "${BACKUP_DIR}/daily/${DB}-latest${BACKUP_SUFFIX}"
-    echo "Pointing latest weekly backup to the latest backup..."
-    ln "${LATEST_LN_ARG}" -vf "${WEEKLY_FILENAME}" "${BACKUP_DIR}/weekly/${DB}-latest${BACKUP_SUFFIX}"
-    echo "Pointing latest monthly backup to the latest backup..."
-    ln "${LATEST_LN_ARG}" -vf "${MONTHLY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
+    # Update latest symlinks
+    LATEST_LN_ARG=""
+    if [ "${BACKUP_LATEST_TYPE}" = "symlink" ]; then
+      LATEST_LN_ARG="-s"
+    fi
+    if [ "${BACKUP_LATEST_TYPE}" = "symlink" ] || [ "${BACKUP_LATEST_TYPE}" = "hardlink" ]; then
+      echo "Pointing last backup file to the latest backup..."
+      ln "${LATEST_LN_ARG}" -vf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
+      echo "Pointing latest daily backup to the latest backup..."
+      ln "${LATEST_LN_ARG}" -vf "${DAILY_FILENAME}" "${BACKUP_DIR}/daily/${DB}-latest${BACKUP_SUFFIX}"
+      echo "Pointing latest weekly backup to the latest backup..."
+      ln "${LATEST_LN_ARG}" -vf "${WEEKLY_FILENAME}" "${BACKUP_DIR}/weekly/${DB}-latest${BACKUP_SUFFIX}"
+      echo "Pointing latest monthly backup to the latest backup..."
+      ln "${LATEST_LN_ARG}" -vf "${MONTHLY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
+    else
+      echo "Not updating latest backup."
+    fi
+
+    # **Send backup to Telegram**
+    if [[ -n "${TELEGRAM_BOT_TOKEN}" && -n "${TELEGRAM_CHAT_ID}" ]]; then
+      echo "📤 Sending backup file to Telegram..."
+      curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+        -F chat_id="${TELEGRAM_CHAT_ID}" \
+        -F document=@"${FILE}" \
+        -F caption="📂 PostgreSQL Backup: ${DB} ($(date +'%Y-%m-%d %H:%M:%S'))"
+
+      echo "✅ Backup file sent to Telegram successfully!"
+    else
+      echo "⚠️ Telegram credentials not provided. Skipping Telegram upload."
+    fi
+
+    # Clean old files
+    echo "🧹 Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
+    find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "+${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
+    find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime "+${KEEP_DAYS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
+    find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime "+${KEEP_WEEKS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
+    find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime "+${KEEP_MONTHS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
   else
-    echo "Not updating latest backup."
+    echo "❌ Error: Backup file ${FILE} is empty or missing. Skipping Telegram upload."
   fi
-
-  # Clean old files
-  echo "Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
-
-
-  find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "+${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
-  find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime "+${KEEP_DAYS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
-  find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime "+${KEEP_WEEKS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
-  find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime "+${KEEP_MONTHS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
 done
 
-echo "✅ SQL backup created successfully"
+echo "✅ SQL backup process completed successfully."
 
 # Post-backup hook
 if [ -d "${HOOKS_DIR}" ]; then
