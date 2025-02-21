@@ -1,16 +1,14 @@
 name: Docker Push Readme
 
 on:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - 'README.md'
-      - 'dockerhub-header.md'
-      - '.github/workflows/pushrm.yml'
+  workflow_run:
+    workflows: [ "CI" ]
+    types:
+      - completed  # Only trigger after the first workflow completes
 
 jobs:
   push-readme:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Only run if CI succeeded
     runs-on: ubuntu-22.04
     environment: docker.io
     steps:
@@ -27,5 +25,5 @@ jobs:
         with:
           destination_container_repo: ${{ secrets.DOCKERHUB_USERNAME }}/postgres-backup-telegram
           provider: dockerhub
-          short_description: 'Backup PostgresSQL to local filesystem with periodic backups and rotate backups.'
+          short_description: 'Backup PostgreSQL to the local filesystem with periodic backups, automatic rotation, and Telegram bot integration to send the latest backup file.'
           readme_file: 'dockerhub.md'
