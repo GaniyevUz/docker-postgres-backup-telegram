@@ -25,7 +25,7 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
         with:
-          destination_container_repo: ${{ secrets.DOCKERHUB_USERNAME }}/postgres-backup-local
+          destination_container_repo: ${{ secrets.DOCKERHUB_USERNAME }}/postgres-backup-telegram
           provider: dockerhub
           short_description: 'Backup PostgresSQL to local filesystem with periodic backups and rotate backups.'
           readme_file: 'dockerhub.md'

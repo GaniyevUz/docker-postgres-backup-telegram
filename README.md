@@ -1,7 +1,7 @@
-![Docker pulls](https://img.shields.io/docker/pulls/prodrigestivill/postgres-backup-local)
-![GitHub actions](https://github.com/prodrigestivill/docker-postgres-backup-local/actions/workflows/ci.yml/badge.svg?branch=main)
+![Docker pulls](https://img.shields.io/docker/pulls/ganiyevuz/postgres-backup-telegram)
+![GitHub actions](https://github.com/ganiyevuz/docker-postgres-backup-telegram/actions/workflows/ci.yml/badge.svg?branch=main)
 
-# postgres-backup-local
+# postgres-backup-telegram
 
 Backup PostgresSQL to the local filesystem with periodic rotating backups, based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/postgres-backup-s3/).
 Backup multiple databases from the same host by setting the database names in `POSTGRES_DB` separated by commas or spaces.
@@ -17,7 +17,7 @@ This application requires the docker volume `/backups` to be a POSIX-compliant f
 Docker:
 
 ```sh
-docker run -u postgres:postgres -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local
+docker run -u postgres:postgres -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  ganiyevuz/postgres-backup-telegram
 ```
 
 Docker Compose:
@@ -34,7 +34,7 @@ services:
             - POSTGRES_PASSWORD=password
          #  - POSTGRES_PASSWORD_FILE=/run/secrets/db_password <-- alternative for POSTGRES_PASSWORD (to use with docker secrets)
     pgbackups:
-        image: prodrigestivill/postgres-backup-local
+        image: ganiyevuz/postgres-backup-telegram
         restart: always
         user: postgres:postgres # Optional: see below
         volumes:
@@ -157,7 +157,7 @@ By default this container makes daily backups, but you can start a manual backup
 This script as example creates one backup as the running user and saves it the working folder.
 
 ```sh
-docker run --rm -v "$PWD:/backups" -u "$(id -u):$(id -g)" -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local /backup.sh
+docker run --rm -v "$PWD:/backups" -u "$(id -u):$(id -g)" -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  ganiyevuz/postgres-backup-telegram /backup.sh
 ```
 
 ### Automatic Periodic Backups
