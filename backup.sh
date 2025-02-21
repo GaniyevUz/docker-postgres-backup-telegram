@@ -82,7 +82,21 @@ for DB in ${POSTGRES_DBS}; do
     else
       echo "⚠️ Telegram credentials not provided. Skipping Telegram upload."
     fi
+    # Ensure KEEP_DAYS, KEEP_WEEKS, KEEP_MONTHS are set correctly
+    if [[ -z "${KEEP_DAYS}" || ! "${KEEP_DAYS}" =~ ^[0-9]+$ ]]; then
+      echo "❌ Error: KEEP_DAYS is not set or is not a valid number."
+      exit 1
+    fi
 
+    if [[ -z "${KEEP_WEEKS}" || ! "${KEEP_WEEKS}" =~ ^[0-9]+$ ]]; then
+      echo "❌ Error: KEEP_WEEKS is not set or is not a valid number."
+      exit 1
+    fi
+
+    if [[ -z "${KEEP_MONTHS}" || ! "${KEEP_MONTHS}" =~ ^[0-9]+$ ]]; then
+      echo "❌ Error: KEEP_MONTHS is not set or is not a valid number."
+      exit 1
+    fi
     # Clean old files
     echo "🧹 Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
     find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "+${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
