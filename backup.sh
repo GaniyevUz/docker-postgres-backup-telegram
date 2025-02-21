@@ -34,10 +34,10 @@ for DB in ${POSTGRES_DBS}; do
   # Create dump
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
+    pg_dumpall -l "${DB}" "${POSTGRES_EXTRA_OPTS}" | gzip > "${FILE}"
   else
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
+    pg_dump -d "${DB}" -f "${FILE}" "${POSTGRES_EXTRA_OPTS}"
   fi
 
   # Check if the backup file exists and is not empty before proceeding
@@ -45,12 +45,19 @@ for DB in ${POSTGRES_DBS}; do
     echo "✅ Backup file created successfully: ${FILE}"
 
     # Copy (hardlink) for each entry
-    echo "Replacing daily backup ${DFILE} with the latest backup..."
-    ln -vf "${FILE}" "${DFILE}"
-    echo "Replacing weekly backup ${WFILE} with the latest backup..."
-    ln -vf "${FILE}" "${WFILE}"
-    echo "Replacing monthly backup ${MFILE} with the latest backup..."
-    ln -vf "${FILE}" "${MFILE}"
+    if [ -d "${FILE}" ]; then
+        echo "Backup is a directory. Using 'cp -r' instead of 'ln'."
+        cp -r "${FILE}" "${DFILE}"
+        cp -r "${FILE}" "${WFILE}"
+        cp -r "${FILE}" "${MFILE}"
+    else
+        echo "Replacing daily backup ${DFILE} with the latest backup..."
+        ln -vf "${FILE}" "${DFILE}"
+        echo "Replacing weekly backup ${WFILE} with the latest backup..."
+        ln -vf "${FILE}" "${WFILE}"
+        echo "Replacing monthly backup ${MFILE} with the latest backup..."
+        ln -vf "${FILE}" "${MFILE}"
+    fi
 
     # Update latest symlinks
     LATEST_LN_ARG=""
