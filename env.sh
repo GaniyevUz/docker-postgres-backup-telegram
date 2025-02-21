@@ -30,6 +30,7 @@ fi
 if [ -z "${POSTGRES_DB_FILE}" ]; then
   POSTGRES_DBS="${POSTGRES_DB//,/ }"
 elif [ -r "${POSTGRES_DB_FILE}" ]; then
+  # shellcheck disable=SC2034
   POSTGRES_DBS="$(cat "${POSTGRES_DB_FILE}")"
 else
   echo "❌ Missing POSTGRES_DB_FILE file."
@@ -39,6 +40,7 @@ fi
 if [ -z "${POSTGRES_USER_FILE}" ]; then
   export PGUSER="${POSTGRES_USER}"
 elif [ -r "${POSTGRES_USER_FILE}" ]; then
+  # shellcheck disable=SC2155
   export PGUSER="$(cat "${POSTGRES_USER_FILE}")"
 else
   echo "❌ Missing POSTGRES_USER_FILE file."
@@ -48,6 +50,7 @@ fi
 if [ -z "${POSTGRES_PASSWORD_FILE}" ] && [ -z "${POSTGRES_PASSFILE_STORE}" ]; then
   export PGPASSWORD="${POSTGRES_PASSWORD}"
 elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
+  # shellcheck disable=SC2155
   export PGPASSWORD="$(cat "${POSTGRES_PASSWORD_FILE}")"
 elif [ -r "${POSTGRES_PASSFILE_STORE}" ]; then
   export PGPASSFILE="${POSTGRES_PASSFILE_STORE}"
@@ -58,6 +61,7 @@ fi
 
 # Telegram Bot related env
 if [ -n "${TELEGRAM_BOT_TOKEN_FILE}" ] && [ -r "${TELEGRAM_BOT_TOKEN_FILE}" ]; then
+  # shellcheck disable=SC2155
   export TELEGRAM_BOT_TOKEN="$(cat "${TELEGRAM_BOT_TOKEN_FILE}")"
 elif [ -n "${TELEGRAM_BOT_TOKEN}" ]; then
   export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN}"
@@ -67,6 +71,7 @@ else
 fi
 
 if [ -n "${TELEGRAM_CHAT_ID_FILE}" ] && [ -r "${TELEGRAM_CHAT_ID_FILE}" ]; then
+  # shellcheck disable=SC2155
   export TELEGRAM_CHAT_ID="$(cat "${TELEGRAM_CHAT_ID_FILE}")"
 elif [ -n "${TELEGRAM_CHAT_ID}" ]; then
   export TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
