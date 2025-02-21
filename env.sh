@@ -91,7 +91,11 @@ fi
 export PGHOST="${POSTGRES_HOST}"
 export PGPORT="${POSTGRES_PORT}"
 
+# shellcheck disable=SC2034
+KEEP_MINS="${BACKUP_KEEP_MINS}"
+# shellcheck disable=SC2034
 KEEP_WEEKS=$((BACKUP_KEEP_WEEKS * 7 + 1))
+# shellcheck disable=SC2034
 KEEP_MONTHS=$((BACKUP_KEEP_MONTHS * 31 + 1))
 
 if [ ! -d "${BACKUP_DIR}" ] || [ ! -w "${BACKUP_DIR}" ] || [ ! -x "${BACKUP_DIR}" ]; then
