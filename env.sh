@@ -60,30 +60,29 @@ else
   exit 1
 fi
 
+
 # Telegram Bot related env
 if [ -n "${TELEGRAM_BOT_TOKEN_FILE}" ] && [ -r "${TELEGRAM_BOT_TOKEN_FILE}" ]; then
-  # Read token from file
   # shellcheck disable=SC2155
   export TELEGRAM_BOT_TOKEN=$(cat "${TELEGRAM_BOT_TOKEN_FILE}")
 elif [ -n "${TELEGRAM_BOT_TOKEN}" ]; then
-  # Use provided env variable
   export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN}"
 else
-  echo "❌ Error: TELEGRAM_BOT_TOKEN is not set via file or environment variable."
+  echo "❌ Error: TELEGRAM_BOT_TOKEN is not set via environment variable or readable file."
   exit 1
 fi
 
+# Check if TELEGRAM_CHAT_ID is provided via file or environment variable
 if [ -n "${TELEGRAM_CHAT_ID_FILE}" ] && [ -r "${TELEGRAM_CHAT_ID_FILE}" ]; then
-  # Read chat ID from file
   # shellcheck disable=SC2155
   export TELEGRAM_CHAT_ID=$(cat "${TELEGRAM_CHAT_ID_FILE}")
 elif [ -n "${TELEGRAM_CHAT_ID}" ]; then
-  # Use provided env variable
   export TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID}"
 else
-  echo "❌ Error: TELEGRAM_CHAT_ID is not set via file or environment variable."
+  echo "❌ Error: TELEGRAM_CHAT_ID is not set via environment variable or readable file."
   exit 1
 fi
+
 
 
 echo "🔄 Checking Telegram bot credentials..."
