@@ -58,15 +58,23 @@ for DB in ${POSTGRES_DBS}; do
     fi
   fi
 
-  # Check if the backup file exists and is not empty before proceeding
-  if [ -s "${FILE}" ]; then
+  # Check if the backup file or directory exists and is not empty
+  if [ -s "${FILE}" ] || [ -d "${FILE}" ]; then
     echo "✅ Backup file created successfully: ${FILE}"
 
-    # Replace or copy backups
-    ln -vf "${FILE}" "${DFILE}"
-    ln -vf "${FILE}" "${WFILE}"
-    ln -vf "${FILE}" "${MFILE}"
-
+    # Handle files and directories differently
+    if [ -d "${FILE}" ]; then
+      # If it's a directory, copy it recursively
+      echo "Backup is a directory. Using 'cp -r' instead of 'ln'."
+      cp -r "${FILE}" "${DFILE}"
+      cp -r "${FILE}" "${WFILE}"
+      cp -r "${FILE}" "${MFILE}"
+    else
+      # If it's a file, create hard links
+      ln -vf "${FILE}" "${DFILE}"
+      ln -vf "${FILE}" "${WFILE}"
+      ln -vf "${FILE}" "${MFILE}"
+    fi
     # Update latest symlinks
     LATEST_LN_ARG=""
     if [ "${BACKUP_LATEST_TYPE}" = "symlink" ]; then
