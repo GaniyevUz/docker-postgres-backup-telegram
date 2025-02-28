@@ -90,13 +90,14 @@ for DB in ${POSTGRES_DBS}; do
       echo "Not updating latest backup."
     fi
 
-    # Send backup to Telegram
+        # Send backup to Telegram
     if [[ -n "${TELEGRAM_BOT_TOKEN}" && -n "${TELEGRAM_CHAT_ID}" ]]; then
       echo "📤 Sending backup file to Telegram..."
+      # Suppress the result from the API call
       curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
         -F chat_id="${TELEGRAM_CHAT_ID}" \
         -F document=@"${FILE}" \
-        -F caption="📂 PostgreSQL Backup: ${DB} ($(date +'%Y-%m-%d %H:%M:%S'))"
+        -F caption="📂 PostgreSQL Backup: ${DB} ($(date +'%Y-%m-%d %H:%M:%S'))" > /dev/null 2>&1
 
       echo "✅ Backup file sent to Telegram successfully!"
     else
