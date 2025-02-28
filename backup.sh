@@ -62,18 +62,19 @@ for DB in ${POSTGRES_DBS}; do
   if [ -s "${FILE}" ] || [ -d "${FILE}" ]; then
     echo "✅ Backup file created successfully: ${FILE}"
 
-    # Handle files and directories differently
+    # Copy (hardlink) for each entry
     if [ -d "${FILE}" ]; then
-      # If it's a directory, copy it recursively
-      echo "Backup is a directory. Using 'cp -r' instead of 'ln'."
-      cp -r "${FILE}" "${DFILE}"
-      cp -r "${FILE}" "${WFILE}"
-      cp -r "${FILE}" "${MFILE}"
+        echo "Backup is a directory. Using 'cp -r' instead of 'ln'."
+        cp -r "${FILE}" "${DFILE}"
+        cp -r "${FILE}" "${WFILE}"
+        cp -r "${FILE}" "${MFILE}"
     else
-      # If it's a file, create hard links
-      ln -vf "${FILE}" "${DFILE}"
-      ln -vf "${FILE}" "${WFILE}"
-      ln -vf "${FILE}" "${MFILE}"
+        echo "Replacing daily backup ${DFILE} with the latest backup..."
+        ln -vf "${FILE}" "${DFILE}"
+        echo "Replacing weekly backup ${WFILE} with the latest backup..."
+        ln -vf "${FILE}" "${WFILE}"
+        echo "Replacing monthly backup ${MFILE} with the latest backup..."
+        ln -vf "${FILE}" "${MFILE}"
     fi
     # Update latest symlinks
     LATEST_LN_ARG=""
