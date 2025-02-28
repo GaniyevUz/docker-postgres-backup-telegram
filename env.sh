@@ -84,7 +84,7 @@ echo "🔄 Checking Telegram bot credentials..."
 # Send a test message to Telegram and capture only message_id
 RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
      -d chat_id="${TELEGRAM_CHAT_ID}" \
-     -d text="🚀 Container started successfully! Telegram bot credentials are working." \
+     -d text="🚀 Telegram bot credentials are working." \
      -d parse_mode="Markdown")
 
 # Extract message_id from the response
